@@ -2,6 +2,9 @@
 #include <math.h>
 #include <stdlib.h>
 
+#ifndef _OBJECT_H_
+#define _OBJECT_H_
+
 //structure  d object
 typedef struct object_t {
 
@@ -22,3 +25,5 @@ typedef struct object_t {
     } data ;
 } *object;
 
+//Creer proto fonction
+#endif
