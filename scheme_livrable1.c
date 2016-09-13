@@ -15,17 +15,37 @@ object* make_empty_list( void )
 }
 
 //object *make_boolean( unsigned int );
-object* make_caracter(char carac)// fonction bancale
-{
-	return &carac;
-}
-object *make_symbol( char  sym)
+object* make_symbol(char sym,char* chaine)
 {
 	object symbole;
-	symbole="#\";
-	symbole=strcat(symbole,&sym);
-	return &symbole;
+	char new_carac;
+	symbole.type=1;
+	symbole=sym;
+	new_carac=get_next_char(&chaine);
+	while(is_caractere(new_carac))
+	{
+		symbole=strcat(symbole,&new_carac);
+		new_carac=get_next_char(&chaine);
+	}
+	return &sym;
 }
+
+object *make_caractere( char  carac,char* chaine)// a revoir car peut etre chaine de caractere
+{
+	object caractere;
+	char new_carac;
+	caractere.type=4;
+	caractere="#\";
+	caractere=strcat(caractere,&carac);
+	new_carac=get_next_char(&chaine);
+	while(is_symbol(new_carac))
+	{
+		caractere=strcat(caractere,&new_carac);
+		new_carac=get_next_char(&chaine);
+	}
+	return &caractere;
+}
+
 object *make_integer( char* num, char c)
 {
 	object integer=0;
@@ -68,9 +88,9 @@ int is_integer(char num)
         return 1;
     else return 0;
 }
-int is_caracter(char carac)
+int is_symbol(char sym)
 {
-    if(carac>=0x3F  && carac<=0x7A || carac>=0x24 && carac<=0x2D || carac==0x21 ||carac==0x22)
+    if(sym>=0x3F  && sym<=0x7A || sym>=0x24 && sym<=0x2D || sym==0x21 ||sym==0x22)
         return 1;
     else return 0;
 }
@@ -91,7 +111,7 @@ object *read_atom( char * chaine )//depend de la definition de chaine est ce que
         if(c=='\\' )
         {
             c=get_next_char(&temp_chaine);//probleme sur get next char
-            return make_symbol(c);} //attention if symbol ou character
+            return make_caractere(c, temp_chaine);} //attention if symbol ou character
         else
             {
                 if (c=='t') return &true;
@@ -104,9 +124,9 @@ object *read_atom( char * chaine )//depend de la definition de chaine est ce que
 
         break;
     }
-    if(is_caractere(c))
+    if(is_symbol(c))
     {
-        return make_caracter(c);
+        return make_symbol(c);
     }
     else if(is_integer(c))
     {
