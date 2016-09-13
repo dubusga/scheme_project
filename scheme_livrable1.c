@@ -15,12 +15,52 @@ object* make_empty_list( void )
 }
 
 //object *make_boolean( unsigned int );
-object* make_caracter(char carac);
-object *make_symbol( char  sym);
-object *make_integer( char* num);
-object * make_string(char *caractere);
-// ...
-char get_next_char(char** chaine);
+object* make_caracter(char carac)// fonction bancale
+{
+	return &carac;
+}
+object *make_symbol( char  sym)
+{
+	object symbole;
+	symbole="#\";
+	symbole=strcat(symbole,&sym);
+	return &symbole;
+}
+object *make_integer( char* num, char c)
+{
+	object integer=0;
+	char next;
+	integer = atoi(&c);
+	next=get_next_char(&num);
+	while (next>=0x30 && next<=0x39)
+	{
+		integer=integer*10+atoi(&next);
+		next=get_next_char(&num);
+	}
+	return &integer;
+}
+
+//char** s'il faut modif le pointeur de chaine
+object * make_string(char *caractere)
+{
+	object chaine=NULL;
+	char c=get_next_char(&caractere);
+	while (is_caracter(c))
+	{	
+		chaine=strcat(chaine, &c);
+	}
+	return &chaine;
+}
+
+
+char get_next_char(char** chaine)
+{	char c;
+	//on prend le caractere suivant de celui marque par chaine
+	*chaine=*chaine+1; //verif les pointeurs
+	c=**chaine;
+	if (c=' ') return get_next_char(chaine);
+	else	return c;
+} //code pas optimal
 
 int is_integer(char num)
 {
@@ -36,7 +76,9 @@ int is_caracter(char carac)
 }
 object *read( char * );
 //void print( object * );
-object *read_atom( char * chaine )
+
+//voir s'il ne faut pas mettre un char** pour avoir la valeur de fin du pointeur sur la sexpr
+object *read_atom( char * chaine )//depend de la definition de chaine est ce que il y a parenthese
 {
     object* atome=NULL;
     char* temp_chaine=chaine;
@@ -58,7 +100,6 @@ object *read_atom( char * chaine )
             }
         break;
     case '"' :
-        c=get_next_char(&temp_chaine);
         return make_string(temp_chaine);
 
         break;
@@ -69,7 +110,7 @@ object *read_atom( char * chaine )
     }
     else if(is_integer(c))
     {
-        return make_integer(temp_chaine);
+        return make_integer(temp_chaine,c);
     }
     else return error;
 }
@@ -78,5 +119,6 @@ object *read_atom( char * chaine )
 
 
 //void print_atom( object * );
-object *read_pair( char * );
+object *read_pair( char * )
+
 //void print_pair( object * );
